@@ -105,6 +105,10 @@ dist
 
 
 
+###not sure (Jabir)
+package-lock.json
+
+
 
 
 ######################################## Idea Webstorm    #############################################
@@ -137,3 +141,7 @@ dist
 # modules.xml
 # .idea/misc.xml
 # *.ipr
+
+##################Tempory################Recheck#############Jabir##########
+database/user_mysql_raw.js
+services/promise-test.js
