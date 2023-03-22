@@ -3,8 +3,6 @@ const router = express.Router();
 
 const user_controller = require('../controllers/user')
 
-router.get('/registration', function (req, res) {
-    res.json({message: 'Registration Successful'});
-})
+router.post('/registration', user_controller.registration)
 
 module.exports = router;
