@@ -145,3 +145,7 @@ package-lock.json
 ##################Tempory################Recheck#############Jabir##########
 database/user_mysql_raw.js
 services/promise-test.js
+
+
+##### uploaded files #####
+public/files
