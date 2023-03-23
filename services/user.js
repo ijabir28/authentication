@@ -1,5 +1,7 @@
 const user_database = require('../database/user');
+
 require('dotenv').config();
+const fs = require('fs')
 
 async function hash_password({password}) {
     const {createHmac} = await import('node:crypto');
@@ -41,8 +43,6 @@ exports.registration = async function ({first_name, last_name, email, password, 
 
     const hashed_password = await hash_password({password})
 
-    // const token = get_auth_token({email, password: hashed_password});
-
     return is_existing_user({email})
         .then(async result => {
             if (!result) {
@@ -65,10 +65,14 @@ exports.registration = async function ({first_name, last_name, email, password, 
                         console.log({message});
                         return {message: 'REGISTRATION_SUCCESSFUL', token};
                     }).catch((error) => {
+                        fs.unlinkSync(photo);
+
                         console.log(error)
                         throw error;
                     });
             } else {
+                fs.unlinkSync(photo);
+
                 const message = 'USER_EXISTS';
                 console.log({message});
                 throw {message};

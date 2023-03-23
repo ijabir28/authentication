@@ -30,8 +30,8 @@ const Profiles = sequelize.define("profiles", {
     }
 });
 
-// Table create korar shomoy foreign key add korle shomossha hocche. Pore korle hocche na
-Auths.hasOne(Profiles, {onDelete: 'CASCADE'});
+// // Table create korar shomoy foreign key add korle shomossha hocche. Pore korle hocche na
+// Auths.hasOne(Profiles, {onDelete: 'CASCADE'});
 
 sequelize.sync({alter: true}).then(() => {
     console.log('Tables Created Successfully');
