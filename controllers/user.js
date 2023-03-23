@@ -15,8 +15,11 @@ let storage = multer.diskStorage({
 
 let upload = multer({storage: storage});
 
+exports.upload = function (req, res, next) {
+    upload.single('photo')(req, res, next);
+}
 
-exports.registration = function (req, res, next) {
+exports.registration = function (req, res) {
     const user = {first_name, last_name, email, password, nid, age, marital_status} = req.body;
     user.photo = path.join(DIR, req.file.filename);
 
@@ -27,6 +30,12 @@ exports.registration = function (req, res, next) {
     });
 };
 
-exports.upload = function (req, res, next) {
-    upload.single('photo')(req, res, next);
+exports.login = function (req, res) {
+    const credential = {email, password} = req.body;
+
+    user_service.login(credential).then(function (result) {
+        res.status(200).send(result);
+    }).catch((error) => {
+        res.status(401).send(error);
+    });
 }

@@ -30,11 +30,23 @@ function get_auth_token({email, password}) {
                         // console.log({user_auth_data});
 
                         if (user_auth_data.password === password) {
-                            return user_auth_data.token;
+                            const message = 'LOGIN_SUCCESSFUL';
+                            const token = user_auth_data.token;
+                            console.log({message});
+                            return { message, token };
+                        } else {
+                            const message = 'INVALID_CREDENTIALS';
+                            throw {message};
                         }
+                    }).catch((error) => {
+                        console.log(error)
+                        throw error
                     });
+            } else {
+                const message = 'USER_DOES_NOT_EXIST';
+                console.log({message});
+                throw {message};
             }
-            ;
         })
 }
 
@@ -78,4 +90,13 @@ exports.registration = async function ({first_name, last_name, email, password, 
                 throw {message};
             }
         });
+}
+
+exports.login = async function ({email, password}) {
+    const hashed_password = await hash_password({password})
+
+    return get_auth_token({email, password: hashed_password})
+        .then(function (result) {
+            return result;
+        })
 }
