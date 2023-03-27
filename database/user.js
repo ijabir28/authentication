@@ -50,9 +50,6 @@ exports.is_existing_user = function ({email}) {
         }
     }).then(auth => {
         return (!!auth);
-    }).catch((error) => {
-        console.error('Failed to retrieve data : ', error);
-        throw error;
     });
 };
 
@@ -87,7 +84,6 @@ exports.registration = async function ({
 
         return auth.dataValues.token;
     } catch (error) {
-        console.log('error');
         throw error;
 
         if (transaction) {
@@ -103,9 +99,6 @@ exports.get_auth_data = async function ({email}) {
         }
     }).then(auth => {
         return auth.dataValues;
-    }).catch((error) => {
-        console.error('Failed to retrieve data : ', error);
-        throw error;
     });
 };
 
@@ -116,9 +109,6 @@ exports.authenticate = async function ({token}) {
         }
     }).then(function (auth) {
         return auth.id;
-    }).catch((error) => {
-        console.error('Failed to retrieve data : ', error);
-        throw error;
     });
 };
 
@@ -129,9 +119,19 @@ exports.update = async function ({user, authId}) {
         }
     ).then(function (index) {
         return index;
-    }).catch(function (error) {
-        console.error('Failed to update data : ', error);
-        throw error;
+    });
+};
+
+exports.delete = async function ({authId, token}) {
+    return Profiles.destroy(
+        {
+            where: {authId}
+        }
+    ).then(function (index) {
+        return Auths.destroy(
+            {
+                where: {token}
+            })
     });
 };
 

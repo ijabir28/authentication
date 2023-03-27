@@ -53,9 +53,9 @@ function get_auth_token({email, password}) {
 function authenticate({token}) {
     return user_database.authenticate({token})
         .then(function (authId) {
-            // console.log({result})
-            return authId
-        }).catch((error) => {
+            // console.log({authId})
+            return authId;
+        }).catch(function (error) {
             const message = 'UNAUTHORIZED';
             console.log({message});
             throw {message: 'UNAUTHORIZED'};
@@ -73,15 +73,7 @@ exports.registration = async function ({first_name, last_name, email, password, 
                 const token = crypto.randomUUID();
 
                 return user_database.registration({
-                    token,
-                    first_name,
-                    last_name,
-                    email,
-                    password: hashed_password,
-                    nid,
-                    photo,
-                    age,
-                    marital_status
+                    token, first_name, last_name, email, password: hashed_password, nid, photo, age, marital_status
                 })
                     .then((token) => {
                         const message = 'REGISTRATION_SUCCESSFUL';
@@ -116,13 +108,28 @@ exports.update = async function ({user, token}) {
     return authenticate({token})
         .then(function (authId) {
             return user_database.update({user, authId})
-                .then(function (result) {
+                .then(function () {
                     const message = 'SUCCESSFULLY_UPDATED';
                     console.log({message});
                     return {message};
                 }).catch(function (error) {
-                console.log(error);
-                throw error;
-            });
+                    console.log(error);
+                    throw error;
+                });
+        })
+};
+
+exports.delete = async function ({token}) {
+    return authenticate({token})
+        .then(function (authId) {
+            return user_database.delete({authId, token})
+                .then(function () {
+                    const message = 'SUCCESSFULLY_DELETED';
+                    console.log({message});
+                    return {message};
+                }).catch(function (error) {
+                    console.log(error);
+                    throw error;
+                });
         })
 };

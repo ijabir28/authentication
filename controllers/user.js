@@ -7,8 +7,7 @@ const DIR = 'public/files';
 let storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, DIR);
-    },
-    filename: function (req, file, cb) {
+    }, filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + (parseInt(Math.random() * 1000).toString()) + path.extname(file.originalname));
     }
 });
@@ -55,3 +54,14 @@ exports.update = function (req, res) {
             res.status(412).send(error);
         });
 };
+
+exports.delete = function (req, res) {
+    const token = req.params.user_id;
+
+    return user_service.delete({token})
+        .then(function (result) {
+            res.status(200).send(result);
+        }).catch(function (error) {
+            res.status(403).send(error);
+        });
+}
