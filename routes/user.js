@@ -11,4 +11,6 @@ router.put('/:user_id', user_controller.update);
 
 router.delete('/:user_id', user_controller.delete);
 
+router.get('/:user_id', user_controller.profile_details);
+
 module.exports = router;

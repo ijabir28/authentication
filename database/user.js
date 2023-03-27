@@ -93,7 +93,7 @@ exports.registration = async function ({
 };
 
 exports.get_auth_data = async function ({email}) {
-    return await Auths.findOne({
+    return Auths.findOne({
         where: {
             email
         }
@@ -103,17 +103,17 @@ exports.get_auth_data = async function ({email}) {
 };
 
 exports.authenticate = async function ({token}) {
-    return await Auths.findOne({
+    return Auths.findOne({
         where: {
             token
         }
     }).then(function (auth) {
-        return auth.id;
+        return auth;
     });
 };
 
 exports.update = async function ({user, authId}) {
-    return await Profiles.update(
+    return Profiles.update(
         user, {
             where: {authId}
         }
@@ -133,5 +133,13 @@ exports.delete = async function ({authId, token}) {
                 where: {token}
             })
     });
+};
+
+exports.profile_details = async function ({authId}) {
+    return Profiles.findOne(
+        {
+            where: {authId}
+        }
+    );
 };
 

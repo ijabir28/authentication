@@ -52,9 +52,9 @@ function get_auth_token({email, password}) {
 
 function authenticate({token}) {
     return user_database.authenticate({token})
-        .then(function (authId) {
-            // console.log({authId})
-            return authId;
+        .then(function (auth) {
+            // console.log({auth})
+            return auth;
         }).catch(function (error) {
             const message = 'UNAUTHORIZED';
             console.log({message});
@@ -106,7 +106,8 @@ exports.login = async function ({email, password}) {
 
 exports.update = async function ({user, token}) {
     return authenticate({token})
-        .then(function (authId) {
+        .then(function (auth) {
+            const authId = auth.id;
             return user_database.update({user, authId})
                 .then(function () {
                     const message = 'SUCCESSFULLY_UPDATED';
@@ -121,12 +122,31 @@ exports.update = async function ({user, token}) {
 
 exports.delete = async function ({token}) {
     return authenticate({token})
-        .then(function (authId) {
+        .then(function (auth) {
+            const authId = auth.id;
             return user_database.delete({authId, token})
                 .then(function () {
                     const message = 'SUCCESSFULLY_DELETED';
                     console.log({message});
                     return {message};
+                }).catch(function (error) {
+                    console.log(error);
+                    throw error;
+                });
+        })
+};
+
+exports.profile_details = async function ({token}) {
+    return authenticate({token})
+        .then(function (auth) {
+            const authId = auth.id;
+            return user_database.profile_details({authId})
+                .then(function (result) {
+                    const {id, authId, createdAt, updatedAt, ...profile} =  result.dataValues;
+                    console.log({profile});
+                    profile.email = auth.email;
+
+                    return profile;
                 }).catch(function (error) {
                     console.log(error);
                     throw error;

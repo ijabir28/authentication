@@ -64,4 +64,15 @@ exports.delete = function (req, res) {
         }).catch(function (error) {
             res.status(403).send(error);
         });
-}
+};
+
+exports.profile_details = function (req, res) {
+    const token = req.params.user_id;
+
+    return user_service.profile_details({token})
+        .then(function (result) {
+            res.status(200).send(result);
+        }).catch(function (error) {
+            res.status(403).send(error);
+        });
+};
