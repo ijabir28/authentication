@@ -27,6 +27,8 @@ const Profiles = sequelize.define("profiles", {
         type: DataTypes.INTEGER, allowNull: false
     }, marital_status: {
         type: DataTypes.STRING, allowNull: false
+    }, authId: {
+        type: DataTypes.INTEGER, allowNull: false
     }
 });
 
@@ -50,6 +52,7 @@ exports.is_existing_user = function ({email}) {
         return (!!auth);
     }).catch((error) => {
         console.error('Failed to retrieve data : ', error);
+        throw error;
     });
 };
 
@@ -74,8 +77,6 @@ exports.registration = async function ({
             email, password, token
         }, {transaction});
 
-        console.log(typeof (nid));
-
         await Profiles.create({
             first_name, last_name, nid, photo, age, marital_status, authId: auth.id
         }, {transaction});
@@ -87,13 +88,13 @@ exports.registration = async function ({
         return auth.dataValues.token;
     } catch (error) {
         console.log('error');
+        throw error;
 
         if (transaction) {
             await transaction.rollback();
         }
     }
 };
-
 
 exports.get_auth_data = async function ({email}) {
     return await Auths.findOne({
@@ -104,6 +105,33 @@ exports.get_auth_data = async function ({email}) {
         return auth.dataValues;
     }).catch((error) => {
         console.error('Failed to retrieve data : ', error);
+        throw error;
     });
-}
+};
+
+exports.authenticate = async function ({token}) {
+    return await Auths.findOne({
+        where: {
+            token
+        }
+    }).then(function (auth) {
+        return auth.id;
+    }).catch((error) => {
+        console.error('Failed to retrieve data : ', error);
+        throw error;
+    });
+};
+
+exports.update = async function ({user, authId}) {
+    return await Profiles.update(
+        user, {
+            where: {authId}
+        }
+    ).then(function (index) {
+        return index;
+    }).catch(function (error) {
+        console.error('Failed to update data : ', error);
+        throw error;
+    });
+};
 

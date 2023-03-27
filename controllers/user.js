@@ -1,4 +1,4 @@
-const user_service = require('../services/user')
+const user_service = require('../services/user');
 
 const multer = require("multer");
 const path = require("path");
@@ -16,26 +16,42 @@ let storage = multer.diskStorage({
 let upload = multer({storage: storage});
 
 exports.upload = function (req, res, next) {
-    upload.single('photo')(req, res, next);
-}
+    return upload.single('photo')(req, res, next);
+};
 
 exports.registration = function (req, res) {
     const user = {first_name, last_name, email, password, nid, age, marital_status} = req.body;
     user.photo = path.join(DIR, req.file.filename);
 
-    user_service.registration(user).then(function (result) {
-        res.status(200).send(result);
-    }).catch((error) => {
-        res.status(409).send(error);
-    });
+    console.log({user});
+
+    return user_service.registration(user)
+        .then(function (result) {
+            res.status(200).send(result);
+        }).catch((error) => {
+            res.status(409).send(error);
+        });
 };
 
 exports.login = function (req, res) {
     const credential = {email, password} = req.body;
 
-    user_service.login(credential).then(function (result) {
-        res.status(200).send(result);
-    }).catch((error) => {
-        res.status(401).send(error);
-    });
-}
+    return user_service.login(credential)
+        .then(function (result) {
+            res.status(200).send(result);
+        }).catch((error) => {
+            res.status(401).send(error);
+        });
+};
+
+exports.update = function (req, res) {
+    const user = {first_name, last_name, email, nid, age, marital_status} = req.body;
+    const token = req.params.user_id;
+
+    return user_service.update({user, token})
+        .then(function (result) {
+            res.status(200).send(result);
+        }).catch(function (error) {
+            res.status(412).send(error);
+        });
+};

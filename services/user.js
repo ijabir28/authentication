@@ -1,7 +1,7 @@
 const user_database = require('../database/user');
 
 require('dotenv').config();
-const fs = require('fs')
+const fs = require('fs');
 
 async function hash_password({password}) {
     const {createHmac} = await import('node:crypto');
@@ -11,7 +11,7 @@ async function hash_password({password}) {
     return createHmac('sha256', process.env.CRYPTO_SECRET)
         .update(password)
         .digest('hex');
-}
+};
 
 function is_existing_user({email}) {
     // console.log({email});
@@ -19,7 +19,7 @@ function is_existing_user({email}) {
         .then(function (result) {
             return result;
         });
-}
+};
 
 function get_auth_token({email, password}) {
     return is_existing_user({email})
@@ -33,7 +33,7 @@ function get_auth_token({email, password}) {
                             const message = 'LOGIN_SUCCESSFUL';
                             const token = user_auth_data.token;
                             console.log({message});
-                            return { message, token };
+                            return {message, token};
                         } else {
                             const message = 'INVALID_CREDENTIALS';
                             throw {message};
@@ -48,8 +48,19 @@ function get_auth_token({email, password}) {
                 throw {message};
             }
         })
-}
+};
 
+function authenticate({token}) {
+    return user_database.authenticate({token})
+        .then(function (authId) {
+            // console.log({result})
+            return authId
+        }).catch((error) => {
+            const message = 'UNAUTHORIZED';
+            console.log({message});
+            throw {message: 'UNAUTHORIZED'};
+        });
+};
 
 exports.registration = async function ({first_name, last_name, email, password, nid, photo, age, marital_status}) {
 
@@ -75,7 +86,7 @@ exports.registration = async function ({first_name, last_name, email, password, 
                     .then((token) => {
                         const message = 'REGISTRATION_SUCCESSFUL';
                         console.log({message});
-                        return {message: 'REGISTRATION_SUCCESSFUL', token};
+                        return {message, token};
                     }).catch((error) => {
                         fs.unlinkSync(photo);
 
@@ -90,7 +101,7 @@ exports.registration = async function ({first_name, last_name, email, password, 
                 throw {message};
             }
         });
-}
+};
 
 exports.login = async function ({email, password}) {
     const hashed_password = await hash_password({password})
@@ -99,4 +110,19 @@ exports.login = async function ({email, password}) {
         .then(function (result) {
             return result;
         })
-}
+};
+
+exports.update = async function ({user, token}) {
+    return authenticate({token})
+        .then(function (authId) {
+            return user_database.update({user, authId})
+                .then(function (result) {
+                    const message = 'SUCCESSFULLY_UPDATED';
+                    console.log({message});
+                    return {message};
+                }).catch(function (error) {
+                console.log(error);
+                throw error;
+            });
+        })
+};
