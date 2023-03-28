@@ -7,7 +7,7 @@ const sequelize = new Sequelize(process.env.DB_SCHEMA, process.env.DB_USER, proc
 
 const Auths = sequelize.define("auths", {
     email: {
-        type: DataTypes.STRING, allowNull: false
+        type: DataTypes.STRING, allowNull: false, unique: true,
     }, password: {
         type: DataTypes.STRING, allowNull: false
     }, token: {

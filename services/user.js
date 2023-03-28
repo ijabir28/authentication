@@ -120,19 +120,50 @@ exports.update = async function ({user, token}) {
         })
 };
 
+exports.update_image = async function ({user, token}) {
+    return authenticate({token})
+        .then(function (auth) {
+            const authId = auth.id;
+            return user_database.profile_details({authId})
+                .then(function (profile) {
+                    const old_photo = profile.photo;
+
+                    return user_database.update({user, authId})
+                        .then(function () {
+                            fs.unlinkSync(old_photo);
+
+                            const message = 'SUCCESSFULLY_UPDATED_IMAGE';
+                            console.log({message});
+                            return {message};
+                        }).catch(function (error) {
+                            console.log(error);
+                            throw error;
+                        });
+                })
+
+        })
+};
+
 exports.delete = async function ({token}) {
     return authenticate({token})
         .then(function (auth) {
             const authId = auth.id;
-            return user_database.delete({authId, token})
-                .then(function () {
-                    const message = 'SUCCESSFULLY_DELETED';
-                    console.log({message});
-                    return {message};
-                }).catch(function (error) {
-                    console.log(error);
-                    throw error;
-                });
+            return user_database.profile_details({authId})
+                .then(function (profile) {
+                    const photo = profile.photo;
+
+                    return user_database.delete({authId, token})
+                        .then(function () {
+                            fs.unlinkSync(photo);
+
+                            const message = 'SUCCESSFULLY_DELETED';
+                            console.log({message});
+                            return {message};
+                        }).catch(function (error) {
+                            console.log(error);
+                            throw error;
+                        });
+                })
         })
 };
 

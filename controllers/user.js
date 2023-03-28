@@ -2,10 +2,12 @@ const user_service = require('../services/user');
 
 const multer = require("multer");
 const path = require("path");
-const DIR = 'public/files';
+const fs = require("fs");
+const DIR = 'uploads';
 
 let storage = multer.diskStorage({
     destination: function (req, file, callback) {
+        fs.mkdirSync(DIR, { recursive: true })
         callback(null, DIR);
     }, filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + (parseInt(Math.random() * 1000).toString()) + path.extname(file.originalname));
@@ -48,6 +50,19 @@ exports.update = function (req, res) {
     const token = req.params.user_id;
 
     return user_service.update({user, token})
+        .then(function (result) {
+            res.status(200).send(result);
+        }).catch(function (error) {
+            res.status(412).send(error);
+        });
+};
+
+exports.update_image = function (req, res) {
+    const token = req.params.user_id;
+    const user = {};
+    user.photo = path.join(DIR, req.file.filename);
+
+    return user_service.update_image({user, token})
         .then(function (result) {
             res.status(200).send(result);
         }).catch(function (error) {
