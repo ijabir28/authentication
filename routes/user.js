@@ -13,6 +13,6 @@ router.put('/update_image/:user_id', user_controller.upload, user_controller.upd
 
 router.delete('/:user_id', user_controller.delete);
 
-router.get('/:user_id', user_controller.upload, user_controller.profile_details);
+router.get('/:user_id', user_controller.profile_details);
 
 module.exports = router;
