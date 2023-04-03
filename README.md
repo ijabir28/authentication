@@ -1,8 +1,8 @@
-# registration_api
+# Authentication Service
 
-### This is Registration API is built on NodeJs (Express, MySQL)
+### This Authentication Service is built on NodeJs (Express, MySQL)
 
-#### **Registration API has the following body**
+#### **Authentication API has the following body**
 *   first_name
 *   last_name
 *   email
